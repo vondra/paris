@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>24 hodin v Paříži - Janička</title>
+    <meta charset="utf-8">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Georgia', serif; 
+            display: flex;
+            height: 100vh;
+        }
+        #map { 
+            flex: 1;
+            height: 100%; 
+        }
+        #sidebar {
+            width: 300px;
+            background: #fafafa;
+            padding: 25px 20px;
+            border-left: 1px solid #e0e0e0;
+            overflow-y: auto;
+        }
+        .title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            letter-spacing: 1px;
+        }
+        .subtitle {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #ddd;
+        }
+        .place-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+        .place-number {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: bold;
+            color: white;
+            margin-right: 10px;
+            flex-shrink: 0;
+        }
+        .place-info {
+            flex: 1;
+        }
+        .place-name {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 1px;
+        }
+        .place-address {
+            font-size: 10px;
+            color: #888;
+        }
+        .color-hotel { background: #c9a227; }
+        .color-monument { background: #4a5568; }
+        .color-shopping { background: #1a1a1a; }
+        .color-food { background: #9b2c2c; }
+        .color-hermes { background: #c65d07; }
+        .color-kith { background: #2563eb; }
+        
+        .footer {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #ddd;
+            text-align: center;
+        }
+        .carte-blanche {
+            font-size: 15px;
+            font-weight: bold;
+            font-style: italic;
+            color: #333;
+        }
+        .signature {
+            margin-top: 10px;
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .number-marker {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            color: white;
+            border: 3px solid white;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        }
+    </style>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+<body>
+    <div id="map"></div>
+    <div id="sidebar">
+        <div class="title">24 HODIN V PAŘÍŽI</div>
+        <div class="subtitle">29.–30. 12. 2025</div>
+        
+        <div class="place-item">
+            <div class="place-number color-hotel">1</div>
+            <div class="place-info">
+                <div class="place-name">🏨 Hotel Monsieur George</div>
+                <div class="place-address">17 Rue Washington</div>
+            </div>
+        </div>
+        
+        <div class="place-item">
+            <div class="place-number color-monument">2</div>
+            <div class="place-info">
+                <div class="place-name">🏛️ Arc de Triomphe</div>
+                <div class="place-address">Place Charles de Gaulle</div>
+            </div>
+        </div>
+        
+        <div class="place-item">
+            <div class="place-number color-hermes">3</div>
+            <div class="place-info">
+                <div class="place-name">🐴 Hermès</div>
+                <div class="place-address">42 Avenue George V</div>
+            </div>
+        </div>
+        
+        <div class="place-item">
+            <div class="place-number color-shopping">4</div>
+            <div class="place-info">
+                <div class="place-name">👗 Dior</div>
+                <div class="place-address">30 Avenue Montaigne</div>
+            </div>
+        </div>
+        
+        <div class="place-item">
+            <div class="place-number color-shopping">5</div>
+            <div class="place-info">
+                <div class="place-name">🖤 Saint Laurent</div>
+                <div class="place-address">37 Avenue Montaigne</div>
+            </div>
+        </div>
+        
+        <div class="place-item">
+            <div class="place-number color-shopping">6</div>
+            <div class="place-info">
+                <div class="place-name">✨ Celine</div>
+                <div class="place-address">53 Avenue Montaigne</div>
+            </div>
+        </div>
+        
+        <div class="place-item">
+            <div class="place-number color-shopping">7</div>
+            <div class="place-info">
+                <div class="place-name">🛍️ Galeries Lafayette</div>
+                <div class="place-address">60 Av. des Champs-Élysées</div>
+            </div>
+        </div>
+        
+        <div class="place-item">
+            <div class="place-number color-kith">8</div>
+            <div class="place-info">
+                <div class="place-name">👟 Kith Paris</div>
+                <div class="place-address">49 Rue Pierre Charron</div>
+            </div>
+        </div>
+        
+        <div class="place-item">
+            <div class="place-number color-monument">9</div>
+            <div class="place-info">
+                <div class="place-name">🏛️ Petit Palais</div>
+                <div class="place-address">Avenue Winston Churchill</div>
+            </div>
+        </div>
+        
+        <div class="place-item">
+            <div class="place-number color-food">10</div>
+            <div class="place-info">
+                <div class="place-name">🥗 Maison Noura</div>
+                <div class="place-address">21 Avenue Marceau</div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <div class="carte-blanche">Carte Blanche</div>
+            <div class="signature">Ondra</div>
+        </div>
+    </div>
+    
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        var map = L.map('map', {
+            zoomControl: false
+        }).setView([48.8695, 2.3040], 15);
+        
+        L.control.zoom({position: 'topright'}).addTo(map);
+        
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+            attribution: '',
+            maxZoom: 19
+        }).addTo(map);
+
+        var places = [
+            { num: 1, lat: 48.8729, lng: 2.3025, color: '#c9a227' },   // Hotel
+            { num: 2, lat: 48.8738, lng: 2.2950, color: '#4a5568' },   // Arc de Triomphe
+            { num: 3, lat: 48.8698, lng: 2.3015, color: '#c65d07' },   // Hermès
+            { num: 4, lat: 48.8668, lng: 2.3064, color: '#1a1a1a' },   // Dior
+            { num: 5, lat: 48.8672, lng: 2.3050, color: '#1a1a1a' },   // Saint Laurent
+            { num: 6, lat: 48.8681, lng: 2.3079, color: '#1a1a1a' },   // Celine
+            { num: 7, lat: 48.8707, lng: 2.3063, color: '#1a1a1a' },   // Galeries Lafayette
+            { num: 8, lat: 48.8712, lng: 2.3045, color: '#2563eb' },   // Kith Paris
+            { num: 9, lat: 48.8661, lng: 2.3125, color: '#4a5568' },   // Petit Palais
+            { num: 10, lat: 48.8695, lng: 2.3005, color: '#9b2c2c' }   // Maison Noura
+        ];
+
+        places.forEach(function(p) {
+            L.marker([p.lat, p.lng], {
+                icon: L.divIcon({
+                    className: '',
+                    html: '<div class="number-marker" style="background:' + p.color + '">' + p.num + '</div>',
+                    iconSize: [28, 28],
+                    iconAnchor: [14, 14]
+                })
+            }).addTo(map);
+        });
+    </script>
+</body>
+</html>
